@@ -3,13 +3,23 @@ h1 {
 }
 
 .days {
-    display: flex;
+    display: grid;
     flex-direction: column;
+}
+
+.days .day-title {
+    margin: 20px;
 }
 
 .day {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    border: 4px, round, black;
+}
+
+.day div {
+    max-width: 25%;
 }
 
 .next-forecast {
