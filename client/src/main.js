@@ -1,4 +1,4 @@
-import { getWeekForecast, getUpcomingWeather } from "../utils/services";
+import { switchLocations, getWeekForecastFromZones, getWeekForecast } from "../utils/services";
 
 const zoneIDChicago = "ILZ104"
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -9,9 +9,10 @@ const ChicagoLongitude = -87.6324;
 
 
 async function main() {
+  await switchLocations(ChicagoLatitude, ChicagoLongitude);
   // fetch the forecasts for the next 7 days
-  // const twelveHourForecasts = await getUpcomingWeather(zoneIDChicago, "land", 1, 14);
-  const twelveHourForecasts = await getWeekForecast(ChicagoLatitude, ChicagoLongitude, 1, 14);
+  const twelveHourForecasts = await getWeekForecastFromZones("land", 1, 14);
+  // const twelveHourForecasts = await getWeekForecast(1, 14);
   console.log(twelveHourForecasts)
 
   const forecastNameElmt = document.querySelector("#next-forecast-name");

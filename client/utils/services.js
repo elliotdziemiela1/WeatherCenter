@@ -2,8 +2,19 @@ import axios from "axios"
 
 const baseApi = "https://api.weather.gov"
 
+let points; // data from the /points endpoint
+let zoneID;
+
+export async function switchLocations(latitude, longitude){
+  const response = await axios.get(baseApi + "/points/" + latitude + "," + longitude);
+  const forecastZoneURLSplit = (response.data.properties.forecastZone.split("/"))
+  zoneID = forecastZoneURLSplit[forecastZoneURLSplit.length - 1]
+  points = response.data;
+  console.log(zoneID)
+}
+
 // returns an array of objects representing the upcoming 12 hour forecasts in the range of first to last (inclusive).
-export async function getUpcomingWeather(zoneID, zoneType, first, last){
+export async function getWeekForecastFromZones(zoneType, first, last){
   let response = await axios.get(baseApi + "/zones/" + zoneType + "/" + zoneID + "/forecast")
   let forecasts = []
   response.data.properties.periods.forEach((forecast) => {
@@ -17,8 +28,8 @@ export async function getUpcomingWeather(zoneID, zoneType, first, last){
 
 // returns an array of objects representing the upcoming hourly forecasts in the range of first to last (inclusive)
 export async function getHourlyForecast(latitude, longitude, first, last){
-  const pointsResponse = await axios.get(baseApi + "/points/" + latitude + "," + longitude);
-  const hourlyURL = pointsResponse.data.forecastHourly;
+  // const pointsResponse = await axios.get(baseApi + "/points/" + latitude + "," + longitude);
+  const hourlyURL = points.properties.forecastHourly;
   const response = await axios.get(hourlyURL);
   let hourlyForecasts = [];
   
@@ -31,9 +42,10 @@ export async function getHourlyForecast(latitude, longitude, first, last){
   return hourlyForecasts;
 }
 
-export async function getWeekForecast(latitude, longitude, first, last){
-  const pointsResponse = await axios.get(baseApi + "/points/" + latitude + "," + longitude);
-  const forecastURL = pointsResponse.data.properties.forecast;
+// returns an array of objects representing the upcoming 12 hour forecasts in the range of first to last (inclusive).
+export async function getWeekForecast(first, last){
+  // const pointsResponse = await axios.get(baseApi + "/points/" + latitude + "," + longitude);
+  const forecastURL = points.properties.forecast;
   const response = await axios.get(forecastURL);
   let twelveHourForecasts = [];
   
@@ -45,3 +57,4 @@ export async function getWeekForecast(latitude, longitude, first, last){
 
   return twelveHourForecasts;
 }
+
