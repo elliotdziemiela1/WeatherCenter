@@ -11,7 +11,6 @@ export async function switchLocations(latitude, longitude){
   const forecastZoneURLSplit = (response.data.properties.forecastZone.split("/"))
   zoneID = forecastZoneURLSplit[forecastZoneURLSplit.length - 1]
   points = response.data;
-  console.log(zoneID)
 }
 
 // returns an array of objects representing the upcoming 12 hour forecasts in the range of first to last (inclusive).
@@ -23,13 +22,11 @@ export async function getWeekForecastFromZones(zoneType, first, last){
       forecasts[forecast.number - 1] = forecast;
     }
   });
-  // console.log(`Forecasts: ${forecasts}`)
   return forecasts;
 }
 
 // returns an array of objects representing the upcoming hourly forecasts in the range of first to last (inclusive)
 export async function getHourlyForecast(first, last){
-  // const pointsResponse = await axios.get(baseApi + "/points/" + latitude + "," + longitude);
   const hourlyURL = points.properties.forecastHourly;
   const response = await axios.get(hourlyURL, { headers: headers});
   let hourlyForecasts = [];
@@ -45,7 +42,6 @@ export async function getHourlyForecast(first, last){
 
 // returns an array of objects representing the upcoming 12 hour forecasts in the range of first to last (inclusive).
 export async function getWeekForecast(first, last){
-  // const pointsResponse = await axios.get(baseApi + "/points/" + latitude + "," + longitude);
   const forecastURL = points.properties.forecast;
   const response = await axios.get(forecastURL, { headers: headers});
   let twelveHourForecasts = [];

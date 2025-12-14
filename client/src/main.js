@@ -13,8 +13,6 @@ let HourlyForecastElmsCreated = false;
 async function setWeeklyForecasts(){
   // fetch the forecasts for the next 7 days
   const twelveHourForecasts = await getWeekForecastFromZones("land", 1, 14);
-  // const twelveHourForecasts = await getWeekForecast(1, 14);
-  console.log(twelveHourForecasts)
 
   const forecastNameElmt = document.querySelector("#next-forecast-name");
   const forecastBodyElmt = document.querySelector("#next-forecast-body");
@@ -29,8 +27,6 @@ async function setWeeklyForecasts(){
   if (twelveHourForecasts[1].name == daysOfWeek[(currentDayOfWeekIdx+1) % 7]) // if the second forecast is for tomorrow
     forecastOffset = -1;
       
-  console.log(forecastOffset);
-
   // if api gives only a night forecast for today
   if (forecastOffset == -1){
     document.querySelector("#day-1 .night-forecast h4").textContent = twelveHourForecasts[0].name;
@@ -68,14 +64,15 @@ async function initializeHourlyForecasts(){
   for (let i = 0; i < NumberOfHourlyForecasts; i++){
     // Create HTML elements
     let hourElm = document.createElement("div");
-    hourElm.id = "hour-elm-" + i; // TODO
+    hourElm.id = "hour-elm-" + i;
     hourElm.style.textAlign = "center";
     hourElm.style.border = "solid";
     hourElm.style.margin = "1px";
+    hourElm.style.maxWidth = "55px";
     let hourTimeElm = document.createElement("h3");
-    hourTimeElm.id = "hour-time-elm-" + i; // TODO
+    hourTimeElm.id = "hour-time-elm-" + i;
     let hourForecastElm = document.createElement("p");
-    hourForecastElm.id = "hour-forecast-elm-" + i; // TODO
+    hourForecastElm.id = "hour-forecast-elm-" + i;
 
 
     hourTimeElm.textContent = "";
@@ -90,9 +87,6 @@ async function initializeHourlyForecasts(){
 
 async function setHourlyForecasts(){
   let hourlyForecasts = await getHourlyForecast(1,NumberOfHourlyForecasts);
-  console.log("Hourly forecasts: ");
-  console.log(hourlyForecasts);
-  let hourlyContainer = document.querySelector("#hourly-forecasts");
   for (let i = 0; i < hourlyForecasts.length; i++){
     // Time attribute example: "2025-12-13T16:00:00-06:00"
     let hourTime = hourlyForecasts[i].startTime.split("T")[1].split(":")[0];  
@@ -117,7 +111,7 @@ async function setHourlyForecasts(){
     let hourForecastElm = document.querySelector("#hour-forecast-elm-" + i);
 
     hourTimeElm.textContent = hourTime;
-    hourForecastElm.textContent = hourlyForecasts[i].temperature + " degrees, " + hourlyForecasts[i].shortForecast;
+    hourForecastElm.textContent = hourlyForecasts[i].temperature + "\u00B0 F, " + hourlyForecasts[i].shortForecast;
   }
 }
 
@@ -133,13 +127,13 @@ async function updatePage(latitude, longitude) {
 // add event listener to city selector changing value to update the page with new coordinates
 let currentCitySelector = document.querySelector("#city-selector");
 currentCitySelector.addEventListener("change", (event) => {
-  console.log("New City Selected.")
   updatePage(event.target.value.split(",")[0], event.target.value.split(",")[1]);
 })
 
 function main (){
   initializeHourlyForecasts();
-  updatePage(ChicagoLatitude, ChicagoLongitude);
+  let coordinates = document.querySelector("#city-selector").value
+  updatePage(coordinates.split(",")[0], coordinates.split(",")[1]);
 }
 
 main();
