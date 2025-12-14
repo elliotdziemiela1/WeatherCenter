@@ -19,8 +19,8 @@ async function setWeeklyForecasts(){
   const forecastNameElmt = document.querySelector("#next-forecast-name");
   const forecastBodyElmt = document.querySelector("#next-forecast-body");
     
-  forecastNameElmt.innerHTML = twelveHourForecasts[0].name;
-  forecastBodyElmt.innerHTML = twelveHourForecasts[0].detailedForecast;
+  forecastNameElmt.textContent = twelveHourForecasts[0].name;
+  forecastBodyElmt.textContent = twelveHourForecasts[0].detailedForecast;
   
   // due to the lack of strict formatting for the NWS api, the current day can have either two forecasts (today, tonight)
   // or one forecast (tonight) in the twelveHourForecasts array. If it's only 1 forecast, we will set an offset of -1 to use when 
@@ -33,31 +33,31 @@ async function setWeeklyForecasts(){
 
   // if api gives only a night forecast for today
   if (forecastOffset == -1){
-    document.querySelector("#day-1 .night-forecast h4").innerHTML = twelveHourForecasts[0].name;
-    document.querySelector("#day-1 .night-forecast p").innerHTML = twelveHourForecasts[0].detailedForecast;
-    document.querySelector("#day-1 .day-title").innerHTML = daysOfWeek[currentDayOfWeekIdx];
+    document.querySelector("#day-1 .night-forecast h4").textContent = twelveHourForecasts[0].name;
+    document.querySelector("#day-1 .night-forecast p").textContent = twelveHourForecasts[0].detailedForecast;
+    document.querySelector("#day-1 .day-title").textContent = daysOfWeek[currentDayOfWeekIdx];
   } else { // else api gives a morning and a night forecast for today
-    document.querySelector("#day-1 .morning-forecast h4").innerHTML = twelveHourForecasts[0].name;
-    document.querySelector("#day-1 .morning-forecast p").innerHTML = twelveHourForecasts[0].detailedForecast;
-    document.querySelector("#day-1 .night-forecast h4").innerHTML = twelveHourForecasts[1].name;
-    document.querySelector("#day-1 .night-forecast p").innerHTML = twelveHourForecasts[1].detailedForecast;
-    document.querySelector("#day-1 .day-title").innerHTML = daysOfWeek[currentDayOfWeekIdx];
+    document.querySelector("#day-1 .morning-forecast h4").textContent = twelveHourForecasts[0].name;
+    document.querySelector("#day-1 .morning-forecast p").textContent = twelveHourForecasts[0].detailedForecast;
+    document.querySelector("#day-1 .night-forecast h4").textContent = twelveHourForecasts[1].name;
+    document.querySelector("#day-1 .night-forecast p").textContent = twelveHourForecasts[1].detailedForecast;
+    document.querySelector("#day-1 .day-title").textContent = daysOfWeek[currentDayOfWeekIdx];
 
   }
 
   // forecastOffset is either 0 or -1
   // now fill in the rest of the days for the next week
   for (let i = 1; i < 7; i++){
-    document.querySelector(`#day-${i+1} .day-title`).innerHTML = daysOfWeek[(currentDayOfWeekIdx+i) % 7]; // set day of week name
+    document.querySelector(`#day-${i+1} .day-title`).textContent = daysOfWeek[(currentDayOfWeekIdx+i) % 7]; // set day of week name
 
     // set morning forecast
-    document.querySelector(`#day-${i+1} .morning-forecast h4`).innerHTML = twelveHourForecasts[(i*2) + forecastOffset].name;
-    document.querySelector(`#day-${i+1} .morning-forecast p`).innerHTML = twelveHourForecasts[(i*2) + forecastOffset].detailedForecast;
+    document.querySelector(`#day-${i+1} .morning-forecast h4`).textContent = twelveHourForecasts[(i*2) + forecastOffset].name;
+    document.querySelector(`#day-${i+1} .morning-forecast p`).textContent = twelveHourForecasts[(i*2) + forecastOffset].detailedForecast;
 
     // set night forecast
     if (twelveHourForecasts[(i*2) + forecastOffset + 1]){
-      document.querySelector(`#day-${i+1} .night-forecast h4`).innerHTML = twelveHourForecasts[(i*2) + forecastOffset + 1].name;
-      document.querySelector(`#day-${i+1} .night-forecast p`).innerHTML = twelveHourForecasts[(i*2) + forecastOffset + 1].detailedForecast;
+      document.querySelector(`#day-${i+1} .night-forecast h4`).textContent = twelveHourForecasts[(i*2) + forecastOffset + 1].name;
+      document.querySelector(`#day-${i+1} .night-forecast p`).textContent = twelveHourForecasts[(i*2) + forecastOffset + 1].detailedForecast;
     }
   }
 }
@@ -78,8 +78,8 @@ async function initializeHourlyForecasts(){
     hourForecastElm.id = "hour-forecast-elm-" + i; // TODO
 
 
-    hourTimeElm.innerHTML = "";
-    hourForecastElm.innerHTML = "loading...";
+    hourTimeElm.textContent = "";
+    hourForecastElm.textContent = "loading...";
 
     hourElm.appendChild(hourTimeElm);
     hourElm.appendChild(hourForecastElm);
@@ -113,12 +113,11 @@ async function setHourlyForecasts(){
         break;
     }
     // Update HTML elements
-    let hourElm = document.querySelector("#hour-elm-" + i);
     let hourTimeElm = document.querySelector("#hour-time-elm-" + i);
     let hourForecastElm = document.querySelector("#hour-forecast-elm-" + i);
 
-    hourTimeElm.innerHTML = hourTime;
-    hourForecastElm.innerHTML = hourlyForecasts[i].temperature + " degrees, " + hourlyForecasts[i].shortForecast;
+    hourTimeElm.textContent = hourTime;
+    hourForecastElm.textContent = hourlyForecasts[i].temperature + " degrees, " + hourlyForecasts[i].shortForecast;
   }
 }
 
