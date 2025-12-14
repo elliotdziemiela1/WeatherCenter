@@ -1,4 +1,4 @@
-import { switchLocations, getWeekForecastFromZones, getWeekForecast } from "../utils/services";
+import { switchLocations, getWeekForecastFromZones, getWeekForecast, getHourlyForecast } from "../utils/services";
 
 const zoneIDChicago = "ILZ104"
 const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -7,9 +7,7 @@ const currentDayOfWeekIdx = currentDate.getUTCDay();
 const ChicagoLatitude = 41.8832;
 const ChicagoLongitude = -87.6324;
 
-
-async function main() {
-  await switchLocations(ChicagoLatitude, ChicagoLongitude);
+async function setWeeklyForecasts(){
   // fetch the forecasts for the next 7 days
   const twelveHourForecasts = await getWeekForecastFromZones("land", 1, 14);
   // const twelveHourForecasts = await getWeekForecast(1, 14);
@@ -59,7 +57,50 @@ async function main() {
       document.querySelector(`#day-${i+1} .night-forecast p`).innerHTML = twelveHourForecasts[(i*2) + forecastOffset + 1].detailedForecast;
     }
   }
+}
 
+async function setHourlyForecasts(){
+  let hourlyForecasts = await getHourlyForecast(1,24);
+  console.log("Hourly forecasts: ");
+  console.log(hourlyForecasts);
+  let hourlyContainer = document.querySelector("#hourly-forecasts");
+  for (let i = 0; i < hourlyForecasts.length; i++){
+    // Time attribute example: "2025-12-13T16:00:00-06:00"
+    let hourTime = hourlyForecasts[i].startTime.split("T")[1].split(":")[0];  
+    // Convert military time to normal time  
+    if (hourTime == 0){
+      hourTime = "12AM"
+    } else if (hourTime == 12){
+      hourTime = "12PM"
+    } else if (hourTime > 12){
+      hourTime = (hourTime - 12) + "PM"
+    } else {
+      hourTime = hourTime + "AM"
+    }
+
+    // Create HTML elements
+    let hourElm = document.createElement("div");
+    hourElm.style.textAlign = "center";
+    hourElm.style.border = "solid";
+    hourElm.style.margin = "1px";
+    let hourTimeElm = document.createElement("h3");
+    let hourForecastElm = document.createElement("p");
+
+    hourTimeElm.innerHTML = hourTime;
+    hourForecastElm.innerHTML = hourlyForecasts[i].temperature + " degrees, " + hourlyForecasts[i].shortForecast;
+
+    hourElm.appendChild(hourTimeElm);
+    hourElm.appendChild(hourForecastElm);
+    hourlyContainer.appendChild(hourElm);
+  }
+}
+
+async function main() {
+  await switchLocations(ChicagoLatitude, ChicagoLongitude);
+  
+  setWeeklyForecasts();
+
+  setHourlyForecasts();
 
 }
 

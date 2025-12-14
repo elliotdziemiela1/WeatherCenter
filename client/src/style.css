@@ -32,6 +32,11 @@ h1 {
     font-size: larger;
 }
 
-#current-weather p, #current-weather h2 {
+#current-weather .next-forecast, #current-weather h2 {
     text-align: center;
+}
+
+#hourly-forecasts {
+    display: grid;
+    grid-template-columns: repeat(24, 1fr);
 }

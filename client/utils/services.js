@@ -4,9 +4,10 @@ const baseApi = "https://api.weather.gov"
 
 let points; // data from the /points endpoint
 let zoneID;
+const headers = {"User-Agent": "MyWeatherApp (your-email@example.com)" }
 
 export async function switchLocations(latitude, longitude){
-  const response = await axios.get(baseApi + "/points/" + latitude + "," + longitude);
+  const response = await axios.get(baseApi + "/points/" + latitude + "," + longitude, { headers: headers});
   const forecastZoneURLSplit = (response.data.properties.forecastZone.split("/"))
   zoneID = forecastZoneURLSplit[forecastZoneURLSplit.length - 1]
   points = response.data;
@@ -15,7 +16,7 @@ export async function switchLocations(latitude, longitude){
 
 // returns an array of objects representing the upcoming 12 hour forecasts in the range of first to last (inclusive).
 export async function getWeekForecastFromZones(zoneType, first, last){
-  let response = await axios.get(baseApi + "/zones/" + zoneType + "/" + zoneID + "/forecast")
+  let response = await axios.get(baseApi + "/zones/" + zoneType + "/" + zoneID + "/forecast", { headers: headers})
   let forecasts = []
   response.data.properties.periods.forEach((forecast) => {
     if (forecast.number >= first && forecast.number <= last){
@@ -27,10 +28,10 @@ export async function getWeekForecastFromZones(zoneType, first, last){
 }
 
 // returns an array of objects representing the upcoming hourly forecasts in the range of first to last (inclusive)
-export async function getHourlyForecast(latitude, longitude, first, last){
+export async function getHourlyForecast(first, last){
   // const pointsResponse = await axios.get(baseApi + "/points/" + latitude + "," + longitude);
   const hourlyURL = points.properties.forecastHourly;
-  const response = await axios.get(hourlyURL);
+  const response = await axios.get(hourlyURL, { headers: headers});
   let hourlyForecasts = [];
   
   response.data.properties.periods.forEach((period) => {
@@ -46,7 +47,7 @@ export async function getHourlyForecast(latitude, longitude, first, last){
 export async function getWeekForecast(first, last){
   // const pointsResponse = await axios.get(baseApi + "/points/" + latitude + "," + longitude);
   const forecastURL = points.properties.forecast;
-  const response = await axios.get(forecastURL);
+  const response = await axios.get(forecastURL, { headers: headers});
   let twelveHourForecasts = [];
   
   response.data.properties.periods.forEach((period) => {
