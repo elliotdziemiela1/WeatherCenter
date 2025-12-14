@@ -6,6 +6,9 @@ const currentDate = new Date;
 const currentDayOfWeekIdx = currentDate.getUTCDay();
 const ChicagoLatitude = 41.8832;
 const ChicagoLongitude = -87.6324;
+const NumberOfHourlyForecasts = 24;
+
+let HourlyForecastElmsCreated = false;
 
 async function setWeeklyForecasts(){
   // fetch the forecasts for the next 7 days
@@ -59,8 +62,34 @@ async function setWeeklyForecasts(){
   }
 }
 
+
+async function initializeHourlyForecasts(){
+  let hourlyContainer = document.querySelector("#hourly-forecasts");
+  for (let i = 0; i < NumberOfHourlyForecasts; i++){
+    // Create HTML elements
+    let hourElm = document.createElement("div");
+    hourElm.id = "hour-elm-" + i; // TODO
+    hourElm.style.textAlign = "center";
+    hourElm.style.border = "solid";
+    hourElm.style.margin = "1px";
+    let hourTimeElm = document.createElement("h3");
+    hourTimeElm.id = "hour-time-elm-" + i; // TODO
+    let hourForecastElm = document.createElement("p");
+    hourForecastElm.id = "hour-forecast-elm-" + i; // TODO
+
+
+    hourTimeElm.innerHTML = "";
+    hourForecastElm.innerHTML = "loading...";
+
+    hourElm.appendChild(hourTimeElm);
+    hourElm.appendChild(hourForecastElm);
+    hourlyContainer.appendChild(hourElm);
+  }
+  HourlyForecastElmsCreated = true;
+}
+
 async function setHourlyForecasts(){
-  let hourlyForecasts = await getHourlyForecast(1,24);
+  let hourlyForecasts = await getHourlyForecast(1,NumberOfHourlyForecasts);
   console.log("Hourly forecasts: ");
   console.log(hourlyForecasts);
   let hourlyContainer = document.querySelector("#hourly-forecasts");
@@ -78,30 +107,40 @@ async function setHourlyForecasts(){
       hourTime = hourTime + "AM"
     }
 
-    // Create HTML elements
-    let hourElm = document.createElement("div");
-    hourElm.style.textAlign = "center";
-    hourElm.style.border = "solid";
-    hourElm.style.margin = "1px";
-    let hourTimeElm = document.createElement("h3");
-    let hourForecastElm = document.createElement("p");
+    // Wait for hourly forecast elements to be initialized
+    while (1){
+      if (!!HourlyForecastElmsCreated)
+        break;
+    }
+    // Update HTML elements
+    let hourElm = document.querySelector("#hour-elm-" + i);
+    let hourTimeElm = document.querySelector("#hour-time-elm-" + i);
+    let hourForecastElm = document.querySelector("#hour-forecast-elm-" + i);
 
     hourTimeElm.innerHTML = hourTime;
     hourForecastElm.innerHTML = hourlyForecasts[i].temperature + " degrees, " + hourlyForecasts[i].shortForecast;
-
-    hourElm.appendChild(hourTimeElm);
-    hourElm.appendChild(hourForecastElm);
-    hourlyContainer.appendChild(hourElm);
   }
 }
 
-async function main() {
-  await switchLocations(ChicagoLatitude, ChicagoLongitude);
+async function updatePage(latitude, longitude) {
+  await switchLocations(latitude, longitude);
   
   setWeeklyForecasts();
 
   setHourlyForecasts();
 
+}
+
+// add event listener to city selector changing value to update the page with new coordinates
+let currentCitySelector = document.querySelector("#city-selector");
+currentCitySelector.addEventListener("change", (event) => {
+  console.log("New City Selected.")
+  updatePage(event.target.value.split(",")[0], event.target.value.split(",")[1]);
+})
+
+function main (){
+  initializeHourlyForecasts();
+  updatePage(ChicagoLatitude, ChicagoLongitude);
 }
 
 main();
